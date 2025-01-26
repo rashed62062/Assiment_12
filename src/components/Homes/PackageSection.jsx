@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import  { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 const PackageSection = () => {
@@ -26,7 +26,8 @@ const PackageSection = () => {
     if (selectedPackage) {
       setEmployeeLimit(employeeLimit + selectedPackage.members);
       alert(`You have purchased the package for ${selectedPackage.members} members.`);
-      navigate('/employee'); // Redirect to employee page after purchase
+  
+      navigate('/dashboard/my-employee') // Redirect to employee page after purchase
     }
   };
 
@@ -46,7 +47,7 @@ const PackageSection = () => {
             <p className="text-xl">Current Employee Limit: {employeeLimit}</p>
           </div>
           <button
-            onClick={() => navigate('/employee')} // Navigate to employee page for adding employees
+            onClick={() => navigate('dashboard/add-employee')} // Navigate to employee page for adding employees
             className="bg-yellow-500 text-black py-2 px-6 rounded-lg hover:bg-yellow-600 transition duration-300 ease-in-out"
           >
             Add Employees

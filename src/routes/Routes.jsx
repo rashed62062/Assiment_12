@@ -3,23 +3,29 @@ import Home from '../pages/Home/Home'
 import ErrorPage from '../pages/ErrorPage'
 import Login from '../pages/Login/Login'
 import SignUp from '../pages/SignUp/SignUp'
-import PlantDetails from '../pages/PlantDetails/PlantDetails'
+// import PlantDetails from '../pages/PlantDetails/PlantDetails'
 import PrivateRoute from './PrivateRoute'
 import DashboardLayout from '../layouts/DashboardLayout'
-import AddPlant from '../pages/Dashboard/Seller/AddPlant'
-import ManageUsers from '../pages/Dashboard/Admin/ManageUsers'
+// import ManageUsers from '../pages/Dashboard/Admin/ManageUsers'
 import Profile from '../pages/Dashboard/Common/Profile'
 import Statistics from '../pages/Dashboard/Common/Statistics'
 import MainLayout from '../layouts/MainLayout'
-import MyInventory from '../pages/Dashboard/Seller/MyInventory'
-import ManageOrders from '../pages/Dashboard/Seller/ManageOrders'
-import MyOrders from '../pages/Dashboard/Customer/MyOrders'
+// import MyInventory from '../pages/Dashboard/Seller/MyInventory'
+// import ManageOrders from '../pages/Dashboard/Seller/ManageOrders'
+// import MyOrders from '../pages/Dashboard/Customer/MyOrders'
 import Asset from '../components/Dashboard/Sidebar/Menu/NorEmployee/Asset'
 import TeamMembers from '../components/Dashboard/Sidebar/Menu/NorEmployee/TeamMembers'
 import AssetPage from '../components/Dashboard/Sidebar/Menu/NorEmployee/AssetPage'
 import AssetListpage from '../components/Dashboard/HRManager/AssetListpage'
 import AllRequestsPage from '../components/Dashboard/Sidebar/Menu/NorEmployee/AllRequestsPage'
 import MyEmployee from '../components/Dashboard/HRManager/MyEmployee'
+import AddPlantForm from '../components/Form/AddPlantForm'
+import PackageSection from '../components/Dashboard/HRManager/PackageSection'
+
+import PackagesPage from '../components/Dashboard/HRManager/PackagesPage'
+
+
+
 
 
 export const router = createBrowserRouter([
@@ -32,10 +38,7 @@ export const router = createBrowserRouter([
         path: '/',
         element: <Home />,
       },
-      {
-        path: '/plant/:id',
-        element: <PlantDetails />,
-      },
+    
     ],
   },
   { path: '/login', element: <Login /> },
@@ -56,22 +59,7 @@ export const router = createBrowserRouter([
           </PrivateRoute>
         ),
       },
-      {
-        path: 'add-plant',
-        element: (
-          <PrivateRoute>
-            <AddPlant />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: 'my-inventory',
-        element: (
-          <PrivateRoute>
-            <MyInventory />
-          </PrivateRoute>
-        ),
-      },
+      
       {
         path: 'inventory',
         element: (
@@ -108,7 +96,7 @@ export const router = createBrowserRouter([
         path: 'add-an-asset',
         element: (
           <PrivateRoute>
-            <AddPlant />
+            <AddPlantForm />
           </PrivateRoute>
         ),
       },
@@ -129,13 +117,23 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: 'manage-users',
+        path: 'add-employee',
         element: (
           <PrivateRoute>
-            <ManageUsers />
+            <PackageSection />
           </PrivateRoute>
         ),
       },
+      {
+      path: 'packages',
+      element: (
+        <PrivateRoute>
+          <PackagesPage />
+        </PrivateRoute>
+      ),
+    },
+
+    
       {
         path: 'profile',
         element: (
@@ -143,19 +141,8 @@ export const router = createBrowserRouter([
             <Profile />
           </PrivateRoute>
         ),
-      },
-      {
-        path: 'my-orders',
-        element: (
-          <PrivateRoute>
-            <MyOrders />
-          </PrivateRoute>
-        ),
-      },
-      {
-        path: 'manage-orders',
-        element: <ManageOrders />,
-      },
+      }
+    
     ],
   },
 ])

@@ -3,9 +3,10 @@ import { FcGoogle } from 'react-icons/fc'
 import useAuth from '../../hooks/useAuth'
 import { toast } from 'react-hot-toast'
 import { TbFidgetSpinner } from 'react-icons/tb'
+import { AuthContext } from '../../providers/AuthProvider'
 
 const SignUp = () => {
-  const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth()
+  const { createUser, updateUserProfile, signInWithGoogle, loading } = useAuth(AuthContext)
   const navigate = useNavigate()
   // form submit handler
   const handleSubmit = async event => {

@@ -23,6 +23,7 @@ import AddPlantForm from '../components/Form/AddPlantForm'
 import PackageSection from '../components/Dashboard/HRManager/PackageSection'
 
 import PackagesPage from '../components/Dashboard/HRManager/PackagesPage'
+import EmployeeRegistration from '../pages/Login/Logins/EmployeeRegistration'
 
 
 
@@ -43,6 +44,8 @@ export const router = createBrowserRouter([
   },
   { path: '/login', element: <Login /> },
   { path: '/signup', element: <SignUp /> },
+
+  { path:'/employeeRegistration', element: <EmployeeRegistration/>},
   {
     path: '/dashboard',
     element: (
@@ -134,6 +137,15 @@ export const router = createBrowserRouter([
     },
 
     
+      {
+        path: 'profile',
+        element: (
+          <PrivateRoute>
+            <Profile />
+          </PrivateRoute>
+        ),
+      },
+      
       {
         path: 'profile',
         element: (

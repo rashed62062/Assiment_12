@@ -1,40 +1,82 @@
-import React, { useState } from "react";
+import axios from "axios";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import useAuth from "../../../../../hooks/useAuth";
+import { AuthContext } from "../../../../../providers/AuthProvider";
 
 const AssetPage = () => {
+  const {user} = useAuth(AuthContext)
   const [search, setSearch] = useState("");
   const [availability, setAvailability] = useState("");
   const [type, setType] = useState("");
   const [selectedAsset, setSelectedAsset] = useState(null);
   const [notes, setNotes] = useState("");
+  const [assets, setAssets] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // Static asset data
-  const assets = [
-    { id: "1", name: "Laptop", type: "Returnable", availability: "Available" },
-    { id: "2", name: "Mouse", type: "Non-returnable", availability: "Available" },
-    { id: "3", name: "Keyboard", type: "Returnable", availability: "Out of Stock" },
-    { id: "4", name: "Monitor", type: "Returnable", availability: "Available" },
-    { id: "5", name: "Chair", type: "Non-returnable", availability: "Out of Stock" },
-  ];
+  // Fetch assets when search or filters change
+  useEffect(() => {
+    fetchAllAssets();
+  }, [search, availability, type]);
 
-  // Filter assets based on search, availability, and type
-  const filteredAssets = assets.filter((asset) => {
-    const matchesSearch = asset.name.toLowerCase().includes(search.toLowerCase());
-    const matchesAvailability = availability
-      ? asset.availability.toLowerCase() === availability.toLowerCase()
-      : true;
-    const matchesType = type ? asset.type.toLowerCase() === type.toLowerCase() : true;
-    return matchesSearch && matchesAvailability && matchesType;
-  });
+  // Fetch assets with search and filters
+  const fetchAllAssets = async () => {
+    setLoading(true);
+    try {
+      const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/all-assets`, {
+        params: {
+          search,
+          availability,
+          type,
+        },
+      });
+      setAssets(data);
+    } catch (error) {
+      console.error("Error fetching assets:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  // Handle request submission (static handling)
-  const handleRequest = () => {
-    alert(`Request submitted for: ${selectedAsset.name}\nNotes: ${notes}`);
-    setSelectedAsset(null); // Close modal
-    setNotes(""); // Reset notes
+  // Handle request submission
+  const handleRequest = async () => {
+    if (!selectedAsset) return;
+
+    const requestData = {
+      assetId: selectedAsset._id,
+      notes,
+      
+      productQuantity: selectedAsset.productQuantity,
+      productType: selectedAsset.productType,
+      requestDate: new Date().toISOString(),
+      
+      requestedBy:{
+        email: user?.email,
+        name: user?.displayName,
+      },
+      status:'pending',
+     
+      name: selectedAsset.name,
+      
+
+    };
+
+    try {
+      await axios.post(`${import.meta.env.VITE_API_URL}/request-asset`, requestData);
+      toast.success("Request submitted successfully!");
+      setSelectedAsset(null);
+      setNotes("");
+    } catch (error) {
+      console.error("Error submitting request:", error);
+      toast.error("Failed to submit the request.");
+    }
   };
 
   return (
     <div className="p-6">
+      {/* Loading State */}
+      {loading && <div className="text-center text-lg text-gray-600">Loading assets...</div>}
+
       {/* Search Section */}
       <div className="mb-4">
         <input
@@ -71,38 +113,41 @@ const AssetPage = () => {
 
       {/* Assets List */}
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {filteredAssets.map((asset) => (
-          <div
-            key={asset.id}
-            className="p-4 border border-gray-300 rounded-lg shadow-md"
-          >
-            <h3 className="text-lg font-semibold">{asset.name}</h3>
-            <p>Type: {asset.type}</p>
-            <p>
-              Availability:{" "}
-              <span
-                className={`${
-                  asset.availability === "Available"
-                    ? "text-green-600"
-                    : "text-red-600"
+        {assets.map((asset) => {
+          // Determine availability based on quantity length
+          const isAvailable = asset.quantity > 1;
+          const availabilityStatus = isAvailable ? "Available" : "Out of Stock";
+          return (
+            <div
+              key={asset._id}
+              className="p-4 border border-gray-300 rounded-lg shadow-md"
+            >
+              <h3 className="text-lg font-semibold">{asset.name}</h3>
+              <p>Type: {asset.productType}</p>
+              <p>
+                Availability:{" "}
+                <span
+                  className={`${
+                    isAvailable ? "text-green-600" : "text-red-600"
+                  }`}
+                >
+                  {availabilityStatus}
+                </span>
+              </p>
+              <button
+                disabled={!isAvailable}
+                onClick={() => setSelectedAsset(asset)}
+                className={`mt-2 px-4 py-2 rounded-md ${
+                  isAvailable
+                    ? "bg-blue-600 text-white hover:bg-blue-700"
+                    : "bg-gray-400 text-gray-700 cursor-not-allowed"
                 }`}
               >
-                {asset.availability}
-              </span>
-            </p>
-            <button
-              disabled={asset.availability !== "Available"}
-              onClick={() => setSelectedAsset(asset)}
-              className={`mt-2 px-4 py-2 rounded-md ${
-                asset.availability === "Available"
-                  ? "bg-blue-600 text-white hover:bg-blue-700"
-                  : "bg-gray-400 text-gray-700 cursor-not-allowed"
-              }`}
-            >
-              Request
-            </button>
-          </div>
-        ))}
+                Request
+              </button>
+            </div>
+          );
+        })}
       </div>
 
       {/* Modal */}

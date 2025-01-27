@@ -4,9 +4,10 @@ import useAuth from '../../hooks/useAuth'
 import toast from 'react-hot-toast'
 import { TbFidgetSpinner } from 'react-icons/tb'
 import LoadingSpinner from '../../components/Shared/LoadingSpinner'
+import { AuthContext } from '../../providers/AuthProvider'
 
 const Login = () => {
-  const { signIn, signInWithGoogle, loading, user } = useAuth()
+  const { signIn, signInWithGoogle, loading, user } = useAuth(AuthContext)
   const navigate = useNavigate()
   const location = useLocation()
   const from = location?.state?.from?.pathname || '/'
